@@ -49,6 +49,7 @@ def reading_data(filename, data, g):
                 elem = Element()
                 elem.ID = [int(n1), int(n2), int(n3), int(n4)]
                 elem.obliczJakobiany(g)
+                elem.obliczH(data.conductivity)
                 g.elems.append(elem)
         elif line.startswith("*BC"):
             i = i +1
