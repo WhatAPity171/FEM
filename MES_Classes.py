@@ -7,6 +7,22 @@ class Node:
         self.y = y
 import numpy as np
 
+class GlobalData:
+    def __init__(self):
+        self.simulationTime = 0
+        self.simulationTimeStep = 0
+        self.conductivity = 0.0
+        self.alpha = 0.0
+        self.Tot = 0.0
+        self.initialTemp = 0.0
+        self.specificHeat = 0.0
+        self.density = 0.0
+        self.nNode = 0
+        self.nElem = 0
+        self.npc = 4
+        self.MatrixH = np.zeros((self.nNode,self.nNode))
+
+
 class ElemUniv:
     def __init__(self):
         self.npc = 4
@@ -85,7 +101,7 @@ class Element:
             self.Jakobian[i].obliczDet()
             self.Jakobian[i].obliczJ1()
 
-    def obliczH(self, conductivity):
+    def obliczH(self, conductivity, glob: GlobalData):
         univ = ElemUniv()
         dN_dx = np.zeros_like(univ.dN_dE)
         dN_dy = np.zeros_like(univ.dN_dn)
@@ -100,23 +116,14 @@ class Element:
         #print(dN_dx)
         #print(dN_dy)
         self.H *= conductivity
+        for (i,j), value in np.ndenumerate(self.H):
+            globI = self.ID[i] - 1
+            globJ = self.ID[j] - 1
+            glob.MatrixH[globI,globJ] += value
         print(self.H)
 
 
 
-class GlobalData:
-    def __init__(self):
-        self.simulationTime = 0
-        self.simulationTimeStep = 0
-        self.conductivity = 0.0
-        self.alpha = 0.0
-        self.Tot = 0.0
-        self.initialTemp = 0.0
-        self.specificHeat = 0.0
-        self.density = 0.0
-        self.nNode = 0
-        self.nElem = 0
-        self.npc = 4
 
 
 

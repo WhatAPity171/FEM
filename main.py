@@ -1,16 +1,17 @@
 from read_data import *
 from MES_Classes import *
+import pandas as pd
 def main():
     data = GlobalData()
     g = Grid()
     
-    if not reading_data("Test2_4_4_MixGrid.txt", data, g):
+    if not reading_data("Test1_4_4.txt", data, g):
         return
 
     print("File loaded successfully!")
-    print(f"Number of nodes: {g.nNode}")
+    print(f"Number of nodes: {data.nNode}")
     print(f"Number of elements: {g.nElem}\n")
-
+    
     for i, elem in enumerate(g.elems, start=1):
         print(f"Element {i}:")
         print("  Node IDs:", " ".join(map(str, elem.ID)))
@@ -21,6 +22,8 @@ def main():
         print()
 
     print("Boundary condition nodes:", g.BC)
+    np.set_printoptions(precision=5, suppress=True, linewidth=200)
+    print(data.MatrixH)
 
 
 if __name__ == "__main__":

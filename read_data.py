@@ -30,6 +30,8 @@ def reading_data(filename, data, g):
             data.density = float(line.split()[1])
         elif line.startswith("Nodes number"):
             data.nNode = int(line.split()[2])
+            #trzeba utworzyć element MatrixH od nowa, dopiero teraz znamy nNodes
+            data.MatrixH = np.zeros((data.nNode,data.nNode))
         elif line.startswith("Elements number"):
             data.nElem = int(line.split()[2])
         elif line.startswith("*Node"):
@@ -49,7 +51,7 @@ def reading_data(filename, data, g):
                 elem = Element()
                 elem.ID = [int(n1), int(n2), int(n3), int(n4)]
                 elem.obliczJakobiany(g)
-                elem.obliczH(data.conductivity)
+                elem.obliczH(data.conductivity, data)
                 g.elems.append(elem)
         elif line.startswith("*BC"):
             i = i +1
