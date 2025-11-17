@@ -22,7 +22,7 @@ class GlobalData:
         self.npc = 4
         self.MatrixH = np.zeros((self.nNode,self.nNode))
 
-
+#note to self, pozmieniac npc na 2 zamiast 4 i wczytywanie z pliku, teraz pokazuje sie w 2d zamiast w 1d i mnozenie przez siebie smh
 class ElemUniv:
     def __init__(self):
         self.npc = 4
@@ -49,6 +49,41 @@ class ElemUniv:
 
             self.dN_dE[i, 3] = -0.25 * (1 + y)
             self.dN_dn[i, 3] = 0.25 * (1 - x)
+class Surface:
+    def __init__(self, wall, npc = 2):#npc w formie 2d, jeśli podawane w obecnej wersji kodu trzeba podac sqrt
+        self.N = np.zeros((npc,4))
+        params = GaussLegendreParams(npc)
+        points = []
+        if wall == 0: # 0 - sciana dolna
+            for i in range(npc):
+                point = [params.points[i], -1]
+                points.append(point)
+        if wall == 1: # 1 - sciana prawa
+            for i in range(npc):
+                point = [1, params.points[i]]
+                points.append(point)        
+        if wall == 2: # 2 - sciana gorna
+            for i in range(npc):
+                point = [params.points[i], 1]
+                points.append(point)
+        if wall == 3: # 3 - sciana lewa
+            for i in range(npc):
+                point = [-1, params.points[i]]
+                points.append(point)
+        #print(points)
+        for i, element in enumerate(points):
+            ksi = element[0]
+            eta = element[1]
+            self.N[i][0] = 0.25*(1-ksi)*(1-eta) #N1
+            self.N[i][1] = 0.25*(1+ksi)*(1-eta) #N2
+            self.N[i][2] = 0.25*(1+ksi)*(1+eta) #N3
+            self.N[i][3] = 0.25*(1-ksi)*(1+eta) #N4
+        #print(self.N)
+class SurfaceUniv:
+    def __init__(self, npc = 2):
+        self.walls = []
+        for i in range(4):
+            pass
 
 class Grid:
     def __init__(self):

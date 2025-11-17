@@ -4,7 +4,11 @@ import pandas as pd
 def main():
     data = GlobalData()
     g = Grid()
-    
+
+    s = Surface(3, 2)
+    return
+
+
     if not reading_data("Test1_4_4.txt", data, g):
         return
 
