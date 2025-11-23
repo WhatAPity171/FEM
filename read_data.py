@@ -7,6 +7,13 @@ def reading_data(filename, data, g):
     except FileNotFoundError:
         print(f"Error: Cannot open file {filename}")
         return False
+    for line in lines:
+        if line.startswith("*BC"):
+            idx = lines.index(line)
+            parts = [p.strip() for p in lines[idx + 1].split(",")]
+            data.BC = [int(p) for p in parts]
+            g.BC = [int(p) for p in parts]
+            break
     i : int
     i = 0
     while i < len(lines):
@@ -34,6 +41,11 @@ def reading_data(filename, data, g):
             data.MatrixH = np.zeros((data.nNode,data.nNode))
         elif line.startswith("Elements number"):
             data.nElem = int(line.split()[2])
+        elif line.startswith("*BC"):
+            i = i +1
+            parts = [p.strip() for p in lines[i].split(",")]
+            data.BC = [int(p) for p in parts]
+            g.BC = [int(p) for p in parts]
         elif line.startswith("*Node"):
             g.nodes = []
             for j in range(data.nNode):
@@ -51,13 +63,8 @@ def reading_data(filename, data, g):
                 elem = Element()
                 elem.ID = [int(n1), int(n2), int(n3), int(n4)]
                 elem.obliczJakobiany(g)
-                elem.obliczH(data.conductivity, data)
+                elem.obliczH(data.conductivity, data, g)
                 g.elems.append(elem)
-        elif line.startswith("*BC"):
-            i = i +1
-            parts = [p.strip() for p in lines[i].split(",")]
-            g.BC = [int(p) for p in parts]
-
         i = i + 1
 
     g.nNode = data.nNode
