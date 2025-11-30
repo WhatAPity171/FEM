@@ -22,6 +22,7 @@ class GlobalData:
         self.npc = 4
         self.MatrixH = np.zeros((self.nNode,self.nNode))
         self.BC = []
+        self.P = np.zeros(1)
 
 #note to self, pozmieniac npc na 2 zamiast 4 i wczytywanie z pliku, teraz pokazuje sie w 2d zamiast w 1d i mnozenie przez siebie smh
 class ElemUniv:
@@ -56,6 +57,7 @@ class Surface:
         params = GaussLegendreParams(npc)
         points = []
         self.Hbc = np.zeros((4,4))
+        self.P = 0.0
         if wall == 0: # 0 - sciana dolna
             for i in range(npc):
                 point = [params.points[i], -1]
@@ -86,7 +88,9 @@ class Surface:
             tempHbc *= glob.alpha
             tempHbc *= params.weights[i]
             self.Hbc += tempHbc
-
+            #poniżej z chatu
+            tempP = element * glob.alpha * glob.Tot * params.weights[i]
+            self.P += tempP
         
 class SurfaceUniv:
     def __init__(self, npc = 2):
@@ -124,7 +128,7 @@ class Element:
         self.ID = []
         self.Jakobian = [Jakobian() for _ in range(self.npc)]
         self.H = np.zeros((4, 4))
-
+        self.P = np.zeros(4)
     def obliczJakobiany(self, grid):
         mapping = {n.i: n for n in grid.nodes}
         nodes = [mapping[i] for i in self.ID]
@@ -155,7 +159,12 @@ class Element:
                 c = c**0.5
                 detJ = c/2
                 tempHbc *= detJ 
-                Hbc += tempHbc   
+                Hbc += tempHbc
+                #ponizej P
+                tempP = wall.P
+                tempP *= detJ
+                #print(type(tempP),tempP)
+                self.P += tempP   
         #print(Hbc)        
         return Hbc
     def obliczH(self, conductivity, glob: GlobalData, grid: Grid):
@@ -183,8 +192,11 @@ class Element:
             globJ = self.ID[j] - 1
             glob.MatrixH[globI,globJ] += value
         #print(self.H)
-
-
+    def dodajP(self, glob: GlobalData):
+        for i in range(4):
+            glob.P[self.ID[i]-1] += self.P[i]
+def obliczT(matrixH, vectorP):
+    return np.linalg.solve(matrixH, -vectorP)
 
 
 

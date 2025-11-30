@@ -9,10 +9,9 @@ def main():
     
 
 
-    if not reading_data("Test2_4_4_MixGrid.txt", data, g):
+    if not reading_data("Test1_4_4.txt", data, g):
         return
 
-    print("File loaded successfully!")
     #print(f"Number of nodes: {data.nNode}")
     #print(f"Number of elements: {g.nElem}\n")
     
@@ -25,9 +24,15 @@ def main():
     #        print(f"    Node {node_id}: ({n.x}, {n.y})")
     #    print()
 
-    print("Boundary condition nodes:", data.BC)
+    #print("Boundary condition nodes:", data.BC)
     np.set_printoptions(precision=5, suppress=True, linewidth=200)
     print(data.MatrixH)
+    print(data.P)
+    #zapytać o to na zaj!!!!
+    t = obliczT(data.MatrixH, data.P)
+    print(t)
+    #print(np.allclose(data.MatrixH @ t + data.P, 0))
+
 
 
 if __name__ == "__main__":
