@@ -37,8 +37,9 @@ def reading_data(filename, data, g):
             data.density = float(line.split()[1])
         elif line.startswith("Nodes number"):
             data.nNode = int(line.split()[2])
-            #trzeba utworzyć element MatrixH od nowa, dopiero teraz znamy nNode to samo dla P
+            #trzeba utworzyć element MatrixH od nowa, dopiero teraz znamy nNode to samo dla P i C (pewnie mozna zrobic lepiej)
             data.MatrixH = np.zeros((data.nNode,data.nNode))
+            data.MatrixC = np.zeros((data.nNode,data.nNode))
             data.P = np.zeros(data.nNode)
         elif line.startswith("Elements number"):
             data.nElem = int(line.split()[2])
@@ -61,11 +62,11 @@ def reading_data(filename, data, g):
                 parts = [p.strip() for p in lines[i].split(",")]
                 # example: 1, 1, 2, 6, 5
                 _, n1, n2, n3, n4 = parts
-                elem = Element()
+                elem = Element(data)
                 elem.ID = [int(n1), int(n2), int(n3), int(n4)]
-                elem.obliczJakobiany(g)
-                elem.obliczH(data.conductivity, data, g)
-                elem.dodajP(data)
+                #elem.obliczJakobiany(g)
+                #elem.obliczH(data, g)
+                #elem.dodajP(data)
                 g.elems.append(elem)
         i = i + 1
 
